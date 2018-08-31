@@ -1,4 +1,4 @@
-# cordova-plugin-bluetooth-zbtprinter
+# cordova-plugin-positiva-zbtprinter
 This plugin defines a global 'cordova.plugins.zbtprinter' object, which provides an API for printing base64 images on a Zebra printer 
 and discovering Zebra printers with Bluetooth.
 
@@ -41,7 +41,7 @@ cordova.plugins.zbtprinter.getPrinterName(MACAddress,
 ```
 
 ## Installation
-cordova plugin add https://github.com/aximobile/cordova-plugin-zbtprinter
+cordova plugin add https://github.com/PositivaMitja/zebraprint
 
 ## ZPL - Zebra Programming Language
 For more information about ZPL please see the  [PDF Official Manual](https://support.zebra.com/cpws/docs/zpl/zpl_manual.pdf)
