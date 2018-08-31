@@ -176,7 +176,7 @@ public class ZebraBluetoothPrinter extends CordovaPlugin implements DiscoveryHan
             }
 
             if (zebraPrinterLinkOs != null) {
-                printer.printImage(zebraimage, 150, 0, zebraimage.getWidth(), zebraimage.getHeight(), false);
+                printer.printImage(zebraimage, 20, 20, zebraimage.getWidth(), zebraimage.getHeight(), false);
             } else {
                 Log.d(LOG_TAG, "Storing label on printer...");
                 printer.storeImage("wgkimage.pcx", zebraimage, -1, -1);
