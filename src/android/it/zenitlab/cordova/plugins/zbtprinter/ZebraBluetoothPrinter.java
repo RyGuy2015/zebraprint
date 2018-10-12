@@ -135,7 +135,8 @@ public class ZebraBluetoothPrinter extends CordovaPlugin implements DiscoveryHan
         printer = ZebraPrinterFactory.getInstance(thePrinterConn);
         String printerLanguage = SGD.GET("device.languages", thePrinterConn);
         if (!printerLanguage.contains("zpl")) {
-            SGD.SET("device.languages", "hybrid_xml_zpl", thePrinterConn);
+			// print diff
+            //SGD.SET("device.languages", "hybrid_xml_zpl", thePrinterConn);
             Log.d(LOG_TAG, "printer language set...");
         }
     }
@@ -193,7 +194,8 @@ public class ZebraBluetoothPrinter extends CordovaPlugin implements DiscoveryHan
         String cpcl = "! 0 200 200 ";
         cpcl += zebraimage.getHeight();
         cpcl += " 1\r\n";
-        cpcl += "PW 750\r\nTONE 0\r\nSPEED 6\r\nSETFF 203 5\r\nON - FEED FEED\r\nAUTO - PACE\r\nJOURNAL\r\n";
+		// print diff
+        //cpcl += "PW 750\r\nTONE 0\r\nSPEED 6\r\nSETFF 203 5\r\nON - FEED FEED\r\nAUTO - PACE\r\nJOURNAL\r\n";
         cpcl += "PCX 150 0 !<wgkimage.pcx\r\n";
         cpcl += "FORM\r\n";
         cpcl += "PRINT\r\n";
@@ -244,7 +246,8 @@ public class ZebraBluetoothPrinter extends CordovaPlugin implements DiscoveryHan
         if (zebraPrinterLinkOs != null) {
             String currentLabelLength = zebraPrinterLinkOs.getSettingValue("zpl.label_length");
             if (!currentLabelLength.equals(String.valueOf(zebraimage.getHeight()))) {
-                zebraPrinterLinkOs.setSetting("zpl.label_length", zebraimage.getHeight() + "");
+				// printer_diff
+                //zebraPrinterLinkOs.setSetting("zpl.label_length", zebraimage.getHeight() + "");
             }
         }
     }
