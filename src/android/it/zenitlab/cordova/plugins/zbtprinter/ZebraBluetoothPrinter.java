@@ -248,7 +248,7 @@ public class ZebraBluetoothPrinter extends CordovaPlugin implements DiscoveryHan
             String currentLabelLength = zebraPrinterLinkOs.getSettingValue("zpl.label_length");
             if (!currentLabelLength.equals(String.valueOf(zebraimage.getHeight()))) {
 				// printer_diff
-                //zebraPrinterLinkOs.setSetting("zpl.label_length", zebraimage.getHeight() + "");
+                zebraPrinterLinkOs.setSetting("zpl.label_length", zebraimage.getHeight() + "");
             }
         }
     }
