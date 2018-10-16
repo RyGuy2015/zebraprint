@@ -136,7 +136,7 @@ public class ZebraBluetoothPrinter extends CordovaPlugin implements DiscoveryHan
         String printerLanguage = SGD.GET("device.languages", thePrinterConn);
         if (!printerLanguage.contains("zpl")) {
 			// print diff
-            //SGD.SET("device.languages", "hybrid_xml_zpl", thePrinterConn);
+            SGD.SET("device.languages", "hybrid_xml_zpl", thePrinterConn);
             Log.d(LOG_TAG, "printer language set...");
         }
     }
@@ -248,7 +248,7 @@ public class ZebraBluetoothPrinter extends CordovaPlugin implements DiscoveryHan
             String currentLabelLength = zebraPrinterLinkOs.getSettingValue("zpl.label_length");
             if (!currentLabelLength.equals(String.valueOf(zebraimage.getHeight()))) {
 				// printer_diff
-                zebraPrinterLinkOs.setSetting("zpl.label_length", zebraimage.getHeight() + "");
+                //zebraPrinterLinkOs.setSetting("zpl.label_length", zebraimage.getHeight() + "");
             }
         }
     }
