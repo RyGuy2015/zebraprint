@@ -95,6 +95,8 @@ public class ZebraBluetoothPrinter extends CordovaPlugin implements DiscoveryHan
 
                     //Voldoende wachten zodat label afgeprint is voordat we een nieuwe printer-operatie starten.
                     Thread.sleep(5000);
+					
+					SGD.SET("device.languages", "line_print", thePrinterConn);
 
                     thePrinterConn.close();
 
@@ -183,7 +185,6 @@ public class ZebraBluetoothPrinter extends CordovaPlugin implements DiscoveryHan
                 Log.d(LOG_TAG, "Storing label on printer...");
                 printer.storeImage("wgkimage.pcx", zebraimage, -1, -1);
                 printImageTheOldWay(zebraimage);
-				SGD.SET("device.languages", "line_print", thePrinterConn);
             }
         }
 
@@ -197,7 +198,7 @@ public class ZebraBluetoothPrinter extends CordovaPlugin implements DiscoveryHan
         cpcl += zebraimage.getHeight();
         cpcl += " 1\r\n";
 		// print diff
-        //cpcl += "PW 750\r\nTONE 0\r\nSPEED 6\r\nSETFF 203 5\r\nON - FEED FEED\r\nAUTO - PACE\r\nJOURNAL\r\n";
+        cpcl += "PW 750\r\nTONE 0\r\nSPEED 6\r\nSETFF 203 5\r\nON - FEED FEED\r\nAUTO - PACE\r\nJOURNAL\r\n";
 		//cpcl += "TONE 0\r\nJOURNAL\r\n";
         cpcl += "PCX 150 0 !<wgkimage.pcx\r\n";
         cpcl += "FORM\r\n";
@@ -248,9 +249,10 @@ public class ZebraBluetoothPrinter extends CordovaPlugin implements DiscoveryHan
 
         if (zebraPrinterLinkOs != null) {
             String currentLabelLength = zebraPrinterLinkOs.getSettingValue("zpl.label_length");
+			Log.d(LOG_TAG, "mitja " + currentLabelLength);
             if (!currentLabelLength.equals(String.valueOf(zebraimage.getHeight()))) {
 				// printer_diff
-				Log.d(LOG_TAG, "mitja " + zebraimage.getHeight());
+				Log.d(LOG_TAG, "mitja me " + zebraimage.getHeight());
                 zebraPrinterLinkOs.setSetting("zpl.label_length", zebraimage.getHeight() + "");
             }
         }
