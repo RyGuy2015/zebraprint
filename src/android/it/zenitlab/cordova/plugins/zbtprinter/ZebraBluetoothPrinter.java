@@ -94,7 +94,7 @@ public class ZebraBluetoothPrinter extends CordovaPlugin implements DiscoveryHan
                     printLabel(labels);
 
                     //Voldoende wachten zodat label afgeprint is voordat we een nieuwe printer-operatie starten.
-                    Thread.sleep(15000);
+                    Thread.sleep(5000);
 
                     thePrinterConn.close();
 
@@ -195,7 +195,8 @@ public class ZebraBluetoothPrinter extends CordovaPlugin implements DiscoveryHan
         cpcl += zebraimage.getHeight();
         cpcl += " 1\r\n";
 		// print diff
-        //cpcl += "PW 750\r\nTONE 0\r\nSPEED 6\r\nSETFF 203 5\r\nON - FEED FEED\r\nAUTO - PACE\r\nJOURNAL\r\n";
+        cpcl += "PW 750\r\nTONE 0\r\nSPEED 6\r\nSETFF 203 5\r\nON - FEED FEED\r\nAUTO - PACE\r\nJOURNAL\r\n";
+		//cpcl += "TONE 0\r\nJOURNAL\r\n";
         cpcl += "PCX 150 0 !<wgkimage.pcx\r\n";
         cpcl += "FORM\r\n";
         cpcl += "PRINT\r\n";
