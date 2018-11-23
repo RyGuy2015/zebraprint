@@ -4,6 +4,20 @@ and discovering Zebra printers with Bluetooth.
 
 
 ## Usage
+Used to print a string of ZPL
+
+```js
+function testprint() {
+    cordova.plugins.zbtprinter.printText(MACAddress, printArgTest,
+        function(success) {
+            alert("Print ok");
+        }, function(fail) {
+            alert(fail);
+        }
+    );
+}
+
+
 Images can be printed on a Zebra printer in base64 format:
 
 ```js

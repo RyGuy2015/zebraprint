@@ -12,4 +12,6 @@ exports.getPrinterName = function(MACAddress, successCallback, errorCallback) {
     cordova.exec(successCallback, errorCallback, 'ZebraBluetoothPrinter', 'getPrinterName', [MACAddress]);
 };
 
-
+exports.printText = function(MACAddress, message, successCallback, errorCallback) {
+    cordova.exec(successCallback, errorCallback, 'ZebraBluetoothPrinter', 'printText', [MACAddress, message]);
+};

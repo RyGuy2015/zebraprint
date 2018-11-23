@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/PositivaMitja/zebraprint.git"
+    "url": "git+https://github.com/RyGuy2015/zebraprint.git"
   },
   "keywords": [
     "ecosystem:cordova",
@@ -25,10 +25,10 @@
       "version": ">=3.0.0"
     }
   ],
-  "author": "Dunja Sievi",
+  "author": "Ryan Ingram",
   "license": "UNLICENSED",
   "bugs": {
-    "url": "https://github.com/PositivaMitja/zebraprint/issues"
+    "url": "https://github.com/RyGuy2015/zebraprint/issues"
   },
-  "homepage": "https://github.com/PositivaMitja/zebraprint#readme"
+  "homepage": "https://github.com/RyGuy2015/zebraprint/zebraprint#readme"
 }

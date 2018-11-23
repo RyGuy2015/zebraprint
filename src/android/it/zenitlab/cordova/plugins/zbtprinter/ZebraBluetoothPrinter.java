@@ -15,6 +15,7 @@ import com.zebra.sdk.graphics.internal.ZebraImageAndroid;
 import com.zebra.sdk.printer.PrinterStatus;
 import com.zebra.sdk.printer.SGD;
 import com.zebra.sdk.printer.ZebraPrinter;
+import com.zebra.sdk.printer.PrinterLanguage;
 import com.zebra.sdk.printer.ZebraPrinterFactory;
 import com.zebra.sdk.printer.ZebraPrinterLanguageUnknownException;
 import com.zebra.sdk.printer.ZebraPrinterLinkOs;
@@ -40,6 +41,10 @@ public class ZebraBluetoothPrinter extends CordovaPlugin implements DiscoveryHan
     private ZebraPrinter printer;
     private final int MAX_PRINT_RETRIES = 1;
 
+    private Connection printerConnection;
+
+    //private String macAddress = "AC:3F:A4:CB:45:E9";
+
     public ZebraBluetoothPrinter() {
 
     }
@@ -64,6 +69,19 @@ public class ZebraBluetoothPrinter extends CordovaPlugin implements DiscoveryHan
         } else if (action.equals("getPrinterName")) {
             String MACAddress = args.getString(0);
             getPrinterName(MACAddress);
+            return true;
+        } else if (action.equals("printText")) {
+            try {
+                Log.i(LOG_TAG, "sendFile hit");
+                String mac = args.getString(0);
+                Log.i(LOG_TAG, "mac address " + mac);
+                String msg = args.getString(1);
+                Log.i(LOG_TAG, "message " + msg);
+                sendData(callbackContext, mac, msg);
+            } catch (Exception e) {
+                Log.e(LOG_TAG, e.getMessage());
+                e.printStackTrace();
+            }
             return true;
         }
 
@@ -95,8 +113,8 @@ public class ZebraBluetoothPrinter extends CordovaPlugin implements DiscoveryHan
 
                     //Voldoende wachten zodat label afgeprint is voordat we een nieuwe printer-operatie starten.
                     Thread.sleep(5000);
-					
-					SGD.SET("device.languages", "line_print", thePrinterConn);
+
+                    SGD.SET("device.languages", "line_print", thePrinterConn);
 
                     thePrinterConn.close();
 
@@ -136,9 +154,9 @@ public class ZebraBluetoothPrinter extends CordovaPlugin implements DiscoveryHan
         Log.d(LOG_TAG, "Initializing printer...");
         printer = ZebraPrinterFactory.getInstance(thePrinterConn);
         String printerLanguage = SGD.GET("device.languages", thePrinterConn);
-		Log.d(LOG_TAG, "mitja " + printerLanguage);
+        Log.d(LOG_TAG, "mitja " + printerLanguage);
         if (!printerLanguage.contains("zpl")) {
-			// print diff
+            // print diff
             SGD.SET("device.languages", "hybrid_xml_zpl", thePrinterConn);
             Log.d(LOG_TAG, "printer language set...");
         }
@@ -165,6 +183,8 @@ public class ZebraBluetoothPrinter extends CordovaPlugin implements DiscoveryHan
         return false;
     }
 
+
+    // This is used to print the image labels
     private void printLabel(JSONArray labels) throws Exception {
         ZebraPrinterLinkOs zebraPrinterLinkOs = ZebraPrinterFactory.createLinkOsPrinter(printer);
 
@@ -197,9 +217,9 @@ public class ZebraBluetoothPrinter extends CordovaPlugin implements DiscoveryHan
         String cpcl = "! 0 200 200 ";
         cpcl += zebraimage.getHeight();
         cpcl += " 1\r\n";
-		// print diff
+        // print diff
         cpcl += "PW 750\r\nTONE 0\r\nSPEED 6\r\nSETFF 203 5\r\nON - FEED FEED\r\nAUTO - PACE\r\nJOURNAL\r\n";
-		//cpcl += "TONE 0\r\nJOURNAL\r\n";
+        //cpcl += "TONE 0\r\nJOURNAL\r\n";
         cpcl += "PCX 150 0 !<wgkimage.pcx\r\n";
         cpcl += "FORM\r\n";
         cpcl += "PRINT\r\n";
@@ -223,7 +243,7 @@ public class ZebraBluetoothPrinter extends CordovaPlugin implements DiscoveryHan
                     throw new Exception("Gelieve eerst de etiketten aan te vullen.");
                 } else {
                     throw new Exception("Kon de printerstatus niet ophalen. Gelieve opnieuw te proberen. " +
-                        "Herstart de printer indien dit probleem zich blijft voordoen");
+                            "Herstart de printer indien dit probleem zich blijft voordoen");
                 }
             }
         } catch (ConnectionException e) {
@@ -232,14 +252,14 @@ public class ZebraBluetoothPrinter extends CordovaPlugin implements DiscoveryHan
                 return getPrinterStatus(++retryAttempt);
             } else {
                 throw new Exception("Kon de printerstatus niet ophalen. Gelieve opnieuw te proberen. " +
-                    "Herstart de printer indien dit probleem zich blijft voordoen.");
+                        "Herstart de printer indien dit probleem zich blijft voordoen.");
             }
         }
 
     }
 
     /**
-     * Gebruik de Zebra Android SDK om de lengte te bepalen indien de printer LINK-OS ondersteunt
+     * Use the Zebra SDK to determine the label length
      *
      * @param zebraimage
      * @throws Exception
@@ -249,10 +269,10 @@ public class ZebraBluetoothPrinter extends CordovaPlugin implements DiscoveryHan
 
         if (zebraPrinterLinkOs != null) {
             String currentLabelLength = zebraPrinterLinkOs.getSettingValue("zpl.label_length");
-			Log.d(LOG_TAG, "mitja " + currentLabelLength);
+            Log.d(LOG_TAG, "mitja " + currentLabelLength);
             if (!currentLabelLength.equals(String.valueOf(zebraimage.getHeight()))) {
-				// printer_diff
-				Log.d(LOG_TAG, "mitja me " + zebraimage.getHeight());
+                // printer_diff
+                Log.d(LOG_TAG, "mitja me " + zebraimage.getHeight());
                 zebraPrinterLinkOs.setSetting("zpl.label_length", zebraimage.getHeight() + "");
             }
         }
@@ -272,7 +292,7 @@ public class ZebraBluetoothPrinter extends CordovaPlugin implements DiscoveryHan
                         BluetoothDiscoverer.findPrinters(cordova.getActivity().getApplicationContext(), ZebraBluetoothPrinter.this);
                     } else {
                         Log.d(LOG_TAG, "Bluetooth is disabled...");
-                        callbackContext.error("Bluetooth staat niet aan.");
+                        callbackContext.error("Bluetooth is disabled.");
                     }
 
                 } catch (ConnectionException e) {
@@ -295,7 +315,7 @@ public class ZebraBluetoothPrinter extends CordovaPlugin implements DiscoveryHan
                     Log.d(LOG_TAG, "Successfully found connected printer with name " + printerName);
                     callbackContext.success(printerName);
                 } else {
-                    callbackContext.error("Geen printer gevonden.");
+                    callbackContext.error("Printer name not found.");
                 }
             }
         }).start();
@@ -320,6 +340,93 @@ public class ZebraBluetoothPrinter extends CordovaPlugin implements DiscoveryHan
         return null;
     }
 
+    /*
+     * This will send data to be printed by the bluetooth printer
+     */
+    void sendData(final CallbackContext callbackContext, final String mac, final String msg) throws IOException {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                printer = connect(mac);
+                if (printer != null) {
+                    sendLabel(msg);
+                    callbackContext.success(msg);
+                } else {
+                    //disconnect();
+                    callbackContext.error("Error");
+                }
+            }
+        }).start();
+    }
+
+    public ZebraPrinter connect(String mac) {
+        printerConnection = null;
+        printerConnection = new BluetoothConnection(mac);
+        try {
+            printerConnection.open();
+        } catch (ConnectionException e) {
+            sleep(1000);
+            //disconnect();
+        }
+
+        ZebraPrinter printer = null;
+
+        if (printerConnection.isConnected()) {
+            try {
+                printer = ZebraPrinterFactory.getInstance(printerConnection);
+                PrinterLanguage pl = printer.getPrinterControlLanguage();
+            } catch (ConnectionException e) {
+                printer = null;
+                sleep(1000);
+                //disconnect();
+            } catch (ZebraPrinterLanguageUnknownException e) {
+                printer = null;
+                sleep(1000);
+                //disconnect();
+            }
+        }
+
+        return printer;
+    }
+
+    private void sendLabel(String msg) {
+        try {
+            byte[] configLabel = getConfigLabel(msg);
+            printerConnection.write(configLabel);
+            sleep(1500);
+            Log.i("Ryan", "Made it to SendLabel");
+        } catch (ConnectionException e) {
+            Log.e("Ryan", e.getMessage());
+        } finally {
+            //disconnect();
+        }
+    }
+
+    private byte[] getConfigLabel(String msg) {
+        PrinterLanguage printerLanguage = printer.getPrinterControlLanguage();
+
+        byte[] configLabel = null;
+        if (printerLanguage == PrinterLanguage.ZPL) {
+            configLabel = msg.getBytes();
+            Log.i("Ryan", "Language is ZPL");
+        } else if (printerLanguage == PrinterLanguage.CPCL) {
+            String cpclConfigLabel = "! 0 200 200 406 1\r\n" + "ON-FEED IGNORE\r\n" + "BOX 20 20 380 380 8\r\n" + "T 0 6 137 177 TEST\r\n" + "PRINT\r\n";
+            configLabel = cpclConfigLabel.getBytes();
+            Log.i("Ryan", "Language is CPCL");
+        }
+        return configLabel;
+    }
+    public static void sleep(int ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    //END OF MY STUFF #2
+
     @Override
     public void foundPrinter(DiscoveredPrinter discoveredPrinter) {
         Log.d(LOG_TAG, "Printer found: " + discoveredPrinter.address);
@@ -334,7 +441,7 @@ public class ZebraBluetoothPrinter extends CordovaPlugin implements DiscoveryHan
     public void discoveryFinished() {
         Log.d(LOG_TAG, "Finished searching for printers...");
         if (!printerFound) {
-            callbackContext.error("Geen printer gevonden. Herstart de printer indien dit probleem zich blijft voordoen.");
+            callbackContext.error("Discovery finished but did not find any printers.");
         }
     }
 
